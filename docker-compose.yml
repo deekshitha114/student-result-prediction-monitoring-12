@@ -1,0 +1,26 @@
+services:
+
+  student-api:
+    build: .
+    container_name: student-api
+    ports:
+      - "8000:8000"
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./student_api_alerts.yml:/etc/prometheus/student_api_alerts.yml:ro
+    depends_on:
+      - student-api
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
